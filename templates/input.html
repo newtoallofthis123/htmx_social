@@ -1,0 +1,50 @@
+<div class="w-full">
+    <form class="flex flex-col justify-center items-end gap-y-4 border-y-2 border-neutral-100 px-4 py-2">
+        <textarea name="content" placeholder="What's Up!" id="content"
+            oninput="onWriting(this)"
+            class="text-xl w-full focus:ring-0 focus:outline-none resize-y" rows="1"></textarea>
+        <div class="flex flex-row w-full justify-between items-center">
+            <div class="w-3/5">
+                <div id="emojis"></div>
+                <span id="emoji-button">
+                    <i class="bi bi-emoji-smile"></i>
+                </span>
+            </div>
+            <button
+                hx-post="/create_post"
+                hx-target="#posts"
+                hx-swap="afterbegin"
+                hx-trigger="submit, click" 
+                class="w-1/6 bg-purple-600 text-white text-lg px-3 py-1 rounded-full" type="submit">Submit</button>
+        </div>
+    </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/browser.js"></script>
+<script>
+    const pickerOptions = {
+        onEmojiSelect: (e) => {
+            const content = document.getElementById('content')
+            content.value += e.native
+        },
+        onClickOutside: () => {
+            emojis.removeChild(picker)
+        }
+    }
+    const picker = new EmojiMart.Picker(pickerOptions)
+
+    const emojis = document.getElementById('emojis')
+    const emojiButton = document.getElementById('emoji-button')
+
+    emojiButton.addEventListener('click', () => {
+        if (emojis.contains(picker)) {
+            emojis.removeChild(picker)
+        } else {
+            emojis.appendChild(picker)
+        }
+    })
+
+    const onWriting = (ele) => {
+        ele.style.height = 'auto'
+        ele.style.height = (ele.scrollHeight) + 'px'
+    }
+</script>

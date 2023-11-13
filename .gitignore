@@ -1,0 +1,4 @@
+/.env
+/build
+/bin
+/public/output.css

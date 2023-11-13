@@ -1,0 +1,74 @@
+<div>
+    {{range .Posts}}
+    <form class="py-3 border-b-2 border-neutral-200">
+        <input type="hidden" name="id" value="{{.ID}}">
+        <span class="hidden" id="liked"></span>
+        <div class="px-3">
+            <div id="{{.ID}}">
+                {{.Content}}
+            </div>
+            <div class="py-2">
+                <button class="" id="like_btn" type="reset" data-post-id="{{.ID}}" data-liked="false">
+                    <i class="text-neutral-600 bi bi-heart"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+    {{end}}
+</div>
+<script>
+    like_btns = document.querySelectorAll("#like_btn");
+
+    like_btns.forEach(btn => {
+        let liked = btn.getAttribute("data-liked");
+        let post_id = btn.getAttribute("data-post-id");
+
+        htmx.ajax("POST", "/get_like_status/"+post_id, {
+            target: "#liked",
+        })
+
+        document.getElementById("liked").addEventListener("htmx:afterSwap", () => {
+
+            if (document.getElementById("liked").innerHTML == "true") {
+                btn.children[0].classList.add("text-red-600");
+                btn.children[0].classList.add("bi-heart-fill");
+                btn.children[0].classList.remove("bi-heart");
+                
+                btn.setAttribute("data-liked", "true");
+            }
+            if (document.getElementById("liked").innerHTML == "false") {
+                console.log("false");            
+    
+                btn.children[0].classList.remove("text-red-600");
+                btn.children[0].classList.remove("bi-heart-fill");
+                btn.children[0].classList.add("bi-heart");
+                
+                btn.setAttribute("data-liked", "false");
+            }
+        })
+    })
+
+    like_btns.forEach(btn => {
+        htmx.on(btn, "click", function (e) {
+            e.preventDefault();
+            const post_id = btn.getAttribute("data-post-id");
+            let url = ""
+
+            if (btn.getAttribute("data-liked") == "true") {
+                url = "/unlike/" + post_id;
+                btn.setAttribute("data-liked", "false");
+            } else {
+                url = "/like/" + post_id;
+                btn.setAttribute("data-liked", "true");
+            }
+
+            htmx.ajax("POST", url, {
+                target: "#message",
+            })
+
+            btn.children[0].classList.toggle("text-red-600");
+            btn.children[0].classList.toggle("bi-heart-fill");
+            btn.children[0].classList.toggle("bi-heart");
+        })
+    })
+</script>

@@ -1,0 +1,62 @@
+{{ template "base.html" .}}
+
+<body class="p-2">
+    <h1 class="text-xl">
+        Login to your account
+    </h1>
+    <div class="py-3">
+        <p id="message"></p>
+        <form class="p-2">
+            <h1 class="text-2xl font-bold">Welcome Back!</h1>
+            <input type="email" class="border-2 border-neutral-600 p-1 rounded-md" autocomplete="off" name="email"
+                id="email">
+            <input type="password" class="border-2 border-neutral-600 p-1 rounded-md" autocomplete="off" name="password"
+                id="password">
+            <button hx-post="/login" hx-target="#message" hx-swap="innerHTML" hx-trigger="click"
+                class="bg-black text-white p-2 rounded-md" type="submit">Submit</button>
+        </form>
+    </div>
+    <h1 class="text-xl">
+        Register for an account
+    </h1>
+    <div class="py-3">
+        <p id="message"></p>
+        <form id="auth" class="p-2">
+            <h1 class="text-2xl font-bold">Hey!</h1>
+            <input type="email" class="border-2 border-neutral-600 p-1 rounded-md" autocomplete="off" name="email"
+                id="email">
+            <input type="password" class="border-2 border-neutral-600 p-1 rounded-md" autocomplete="off" name="password"
+                id="password">
+            <button hx-post="/signup" hx-target="#message" hx-swap="innerHTML" hx-trigger="click"
+                class="bg-black text-white p-2 rounded-md" type="submit">Submit</button>
+        </form>
+        <form id="update">
+            <h1 class="text-2xl font-bold">Update your info</h1>
+            <input type="text" class="border-2 border-neutral-600 p-1 rounded-md" autocomplete="off" name="name"
+                id="name">
+            <input type="text" class="border-2 border-neutral-600 p-1 rounded-md" autocomplete="off" name="bio"
+                id="bio">
+            <button hx-post="/update_user" hx-target="#message" hx-swap="innerHTML" hx-trigger="click"
+                class="bg-black text-white p-2 rounded-md" type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+<script>
+    const auth = document.getElementById("auth");
+    const update = document.getElementById("update");
+
+    update.style.display = "none";
+
+    document.getElementById("message").addEventListener("htmx:afterSwap", () => {
+        if(document.getElementById("message").innerHTML == "User logged in"){
+            window.location.href = "/";
+        }
+        if (document.getElementById("message").innerHTML == "User created") {
+            auth.style.display = "none";
+            update.style.display = "block";
+        }
+        if (document.getElementById("message").innerHTML == "User updated") {
+            window.location.href = "/";
+        }
+    })
+</script>
